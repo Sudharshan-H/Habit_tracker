@@ -413,6 +413,48 @@
             totalActiveDays: 0
         };
 
+        // Save data to browser storage
+        function saveData() {
+            try {
+                const dataToSave = JSON.stringify(data);
+                // Using a simple storage approach that works in most browsers
+                document.cookie = `habitTrackerData=${encodeURIComponent(dataToSave)}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
+            } catch (error) {
+                console.log('Could not save data:', error);
+            }
+        }
+
+        // Load data from browser storage or initialize
+        function loadData() {
+            try {
+                // Try to load from cookie storage
+                const cookies = document.cookie.split(';');
+                const dataCookie = cookies.find(cookie => cookie.trim().startsWith('habitTrackerData='));
+                
+                if (dataCookie) {
+                    const savedDataString = decodeURIComponent(dataCookie.split('=')[1]);
+                    const savedData = JSON.parse(savedDataString);
+                    
+                    // Merge saved data with default structure
+                    data = { ...data, ...savedData };
+                }
+            } catch (error) {
+                console.log('Could not load saved data, starting fresh:', error);
+            }
+
+            const today = new Date().toDateString();
+            
+            // Reset daily completions if it's a new day
+            Object.keys(data.habits).forEach(habit => {
+                if (data.habits[habit].lastDate !== today) {
+                    data.habits[habit].completed = false;
+                }
+            });
+
+            renderHabits();
+            updateDisplay();
+        }
+
         // Render habits dynamically
         function renderHabits() {
             const habitsList = document.getElementById('habitsList');
@@ -475,21 +517,6 @@
             }
         }
 
-        // Load data from memory or initialize
-        function loadData() {
-            const today = new Date().toDateString();
-            
-            // Reset daily completions if it's a new day
-            Object.keys(data.habits).forEach(habit => {
-                if (data.habits[habit].lastDate !== today) {
-                    data.habits[habit].completed = false;
-                }
-            });
-
-            renderHabits();
-            updateDisplay();
-        }
-
         function updateDisplay() {
             const today = new Date().toDateString();
             
@@ -547,6 +574,7 @@
             data.longestReadingStreak = Math.max(data.longestReadingStreak, data.readingStreak);
             
             updateStats();
+            saveData(); // Save after updating reading streak
             updateDisplay();
             
             // Celebration effect
@@ -584,6 +612,7 @@
                 }
 
                 updateStats();
+                saveData(); // Save after updating habit
                 renderHabits();
                 updateDisplay();
             }
@@ -593,6 +622,7 @@
         function deleteHabit(habitKey) {
             if (confirm(`Delete "${data.habits[habitKey].name}" habit?`)) {
                 delete data.habits[habitKey];
+                saveData(); // Save after deleting habit
                 renderHabits();
                 updateDisplay();
             }
@@ -620,6 +650,7 @@
                     name: name.trim()
                 };
                 
+                saveData(); // Save after adding new habit
                 renderHabits();
                 updateDisplay();
             }
