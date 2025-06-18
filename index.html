@@ -99,46 +99,6 @@
             text-align: center;
         }
 
-        .reading-section h2 {
-            color: #ffffff;
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-        }
-
-        .weekly-streak {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin: 25px 0;
-        }
-
-        .day-fire {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .fire-icon {
-            font-size: 2rem;
-            transition: all 0.3s ease;
-        }
-
-        .fire-icon.active {
-            filter: drop-shadow(0 0 8px #ff6b35);
-        }
-
-        .fire-icon.inactive {
-            opacity: 0.3;
-            filter: grayscale(100%);
-        }
-
-        .day-label {
-            font-size: 0.8rem;
-            color: #888;
-            font-weight: 500;
-        }
-
         .reading-streak {
             font-size: 3rem;
             font-weight: bold;
@@ -440,6 +400,28 @@
                 }
             } catch (error) {
                 console.log('Could not load saved data, starting fresh:', error);
+            }
+
+            // Initialize 17-day reading streak (excluding today)
+            if (data.readingStreak === 0 && data.readingDates.length === 0) {
+                const today = new Date();
+                data.readingDates = [];
+                
+                // Add the previous 17 days (excluding today) to reading dates
+                for (let i = 1; i <= 17; i++) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() - i);
+                    data.readingDates.push(date.toDateString());
+                }
+                
+                // Set streak to 17 and last reading date to yesterday
+                data.readingStreak = 17;
+                const yesterday = new Date(today);
+                yesterday.setDate(today.getDate() - 1);
+                data.lastReadingDate = yesterday.toDateString();
+                data.longestReadingStreak = 17;
+                
+                saveData(); // Save the initialized data
             }
 
             const today = new Date().toDateString();
