@@ -4,396 +4,540 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Habits & Reading Tracker</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f4f4f9;
-            text-align: center;
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
         }
-        h1 {
-            color: #333;
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-        .section {
-            background-color: white;
-            padding: 20px;
-            margin: 10px 0;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
         }
-        .streak {
-            font-size: 2em;
-            color: #F4A261;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
         }
-        .fire-icon {
-            width: 40px;
-            height: 40px;
-            animation: pulse 2s infinite;
-        }
-        .small-fire-icon {
-            width: 10px;
-            height: 10px;
-            margin-right: 3px;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        .button {
-            background-color: #3498db;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px;
-        }
-        .button:hover {
-            background-color: #2980b9;
-        }
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
-        }
-        .stat-box {
-            background-color: #ecf0f1;
-            padding: 15px;
-            border-radius: 5px;
-            width: 30%;
-        }
-        .calendar {
-            display: grid;
-            grid-template-columns: repeat(7, 40px);
-            gap: 5px;
-            margin-top: 20px;
-            justify-content: center;
-        }
-        .calendar-day {
-            padding: 5px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f9f9f9;
-        }
-        .calendar-day.streak-day {
-            background-color: #2ecc71;
-            color: white;
-        }
-        .calendar-day.today {
-            background-color: #e74c3c;
-            color: white;
-        }
-        .calendar-header {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .weekly-tracker {
-            display: flex;
-            justify-content: center;
-            margin: 10px 0;
-        }
-        .day {
-            display: flex;
-            align-items: center;
-            margin: 0 10px;
-        }
-        .day-label {
-            margin-right: 5px;
-            color: #333;
-        }
-        .checkmark {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: #F4A261;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-        .day.today .checkmark {
-            background-color: #4ECDC4;
-            content: '';
-        }
-        .day.today {
-            background-color: transparent;
-        }
-        .day.today .day-label {
-            color: #4ECDC4;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
         }
     </style>
 </head>
-<body>
-    <h1>🌟 Daily Habits & Reading Tracker</h1>
-    <p>Build consistent habits and maintain your reading streak!</p>
+<body class="p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center min-h-screen">
+    <div class="max-w-3xl w-full bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-10 my-4 border border-gray-200">
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-4 text-center">🌟 Daily Habits & Reading Tracker</h1>
+        <p class="text-lg text-gray-600 mb-8 text-center">Build consistent habits and maintain your reading streak!</p>
 
-    <div class="section">
-        <h2>📚 Reading Streak</h2>
-        <div class="streak">
-            <svg class="fire-icon" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="#ff4500"/>
-                <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="#ffa500"/>
-            </svg>
-            28
+        <!-- Reading Streak Section -->
+        <div class="section bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-6 rounded-lg shadow-md mb-6 transition-all duration-300 ease-in-out transform hover:scale-105">
+            <h2 class="text-3xl font-bold mb-4 text-center">📚 Reading Streak</h2>
+            <div class="streak flex items-center justify-center gap-4 mb-2">
+                <svg class="w-12 h-12 animate-pulse" viewBox="0 0 24 24" fill="currentColor" style="color: #FFD700;">
+                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" />
+                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="#FFA500"/>
+                </svg>
+                <span id="streak-count" class="text-5xl font-extrabold drop-shadow-lg">0</span>
+            </div>
+            <p class="text-xl text-center mb-6">day streak!</p>
+            
+            <!-- Weekly Tracker -->
+            <div class="weekly-tracker flex justify-center flex-wrap gap-4 mb-6" id="weekly-tracker">
+                <!-- Weekly tracker will be populated by JavaScript -->
+            </div>
+
+            <!-- Calendar -->
+            <div class="calendar bg-white text-gray-800 p-4 rounded-md shadow-inner">
+                <div class="flex justify-between items-center mb-4">
+                    <button id="prev-month-btn" class="p-2 rounded-full hover:bg-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <span id="current-month-year" class="text-lg font-semibold"></span>
+                    <button id="next-month-btn" class="p-2 rounded-full hover:bg-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+                <div class="grid grid-cols-7 gap-1 text-sm font-medium text-gray-500 mb-2 text-center">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                </div>
+                <div id="calendar-days" class="grid grid-cols-7 gap-1">
+                    <!-- Calendar days will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <button class="button bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg mt-6 shadow-md transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-green-300" id="mark-reading-btn">Mark Today's Reading ✓</button>
         </div>
-        <p>day streak!</p>
-        <div class="weekly-tracker">
-            <div class="day completed"><span class="day-label">Mo</span><span class="checkmark">✓</span></div>
-            <div class="day completed"><span class="day-label">Tu</span><span class="checkmark">✓</span></div>
-            <div class="day completed"><span class="day-label">We</span><span class="checkmark">✓</span></div>
-            <div class="day completed"><span class="day-label">Th</span><span class="checkmark">✓</span></div>
-            <div class="day completed"><span class="day-label">Fr</span><span class="checkmark">✓</span></div>
-            <div class="day completed"><span class="day-label">Sa</span><span class="checkmark">✓</span></div>
-            <div class="day today"><span class="day-label">Su</span></div>
-        </div>
-        <div class="calendar">
-            <div class="calendar-header">Sun</div>
-            <div class="calendar-header">Mon</div>
-            <div class="calendar-header">Tue</div>
-            <div class="calendar-header">Wed</div>
-            <div class="calendar-header">Thu</div>
-            <div class="calendar-header">Fri</div>
-            <div class="calendar-header">Sat</div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                1
+
+        <!-- Daily Habits Section -->
+        <div class="section bg-white p-6 rounded-xl shadow-md mb-6 border border-gray-200">
+            <h2 class="text-3xl font-bold text-gray-800 mb-5 text-center">✅ Daily Habits</h2>
+            <div id="habits-list" class="space-y-3">
+                <!-- Habits will be populated by JavaScript -->
             </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                2
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                3
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                4
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                5
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                6
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                7
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                8
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                9
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                10
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                11
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                12
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                13
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                14
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                15
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                16
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                17
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                18
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                19
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                20
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                21
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                22
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                23
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                24
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                25
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                26
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                27
-            </div>
-            <div class="calendar-day streak-day">
-                <svg class="small-fire-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" fill="white"/>
-                    <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="white"/>
-                </svg>
-                28
-            </div>
-            <div class="calendar-day today">
-                29
-            </div>
-            <div class="calendar-day">
-                30
+            <div class="add-habit-container flex flex-col sm:flex-row gap-3 justify-center items-center mt-6">
+                <input type="text" id="new-habit-input" class="add-habit-input flex-grow p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200" placeholder="Enter new habit">
+                <button class="button bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300" onclick="addCustomHabit()">+ Add Custom Habit</button>
             </div>
         </div>
-        
-        <button class="button">Mark Today's Reading ✓</button>
+
+        <!-- Stats Section -->
+        <div class="stats flex flex-wrap justify-center gap-4 mt-6">
+            <div class="stat-box bg-white p-5 rounded-lg shadow-md border border-gray-200 text-center flex-1 min-w-[180px] sm:min-w-[200px] transition-all duration-300 ease-in-out transform hover:scale-105">
+                <h3 id="current-streak" class="text-4xl font-extrabold text-blue-600 mb-1">0</h3>
+                <p class="text-gray-600 text-sm sm:text-base">Current Reading Streak</p>
+            </div>
+            <div class="stat-box bg-white p-5 rounded-lg shadow-md border border-gray-200 text-center flex-1 min-w-[180px] sm:min-w-[200px] transition-all duration-300 ease-in-out transform hover:scale-105">
+                <h3 id="habits-completed" class="text-4xl font-extrabold text-teal-600 mb-1">0</h3>
+                <p class="text-gray-600 text-sm sm:text-base">Habits Completed Today</p>
+            </div>
+            <div class="stat-box bg-white p-5 rounded-lg shadow-md border border-gray-200 text-center flex-1 min-w-[180px] sm:min-w-[200px] transition-all duration-300 ease-in-out transform hover:scale-105">
+                <h3 id="longest-streak" class="text-4xl font-extrabold text-yellow-600 mb-1">0</h3>
+                <p class="text-gray-600 text-sm sm:text-base">Longest Reading Streak</p>
+            </div>
+        </div>
     </div>
 
-    <div class="section">
-        <h2>Daily Habits</h2>
-        <ul>
-            <li><input type="checkbox"> Morning Meditation</li>
-            <li><input type="checkbox"> 30-min Workout</li>
-        </ul>
-        <button class="button">+ Add Custom Habit</button>
-    </div>
+    <script>
+        // Formats a Date object into a 'YYYY-MM-DD' string.
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
 
-    <div class="stats">
-        <div class="stat-box">
-            <h3>28</h3>
-            <p>Total Active Days</p>
-        </div>
-        <div class="stat-box">
-            <h3>0</h3>
-            <p>Habits Completed Today</p>
-        </div>
-        <div class="stat-box">
-            <h3>28</h3>
-            <p>Longest Reading Streak</p>
-        </div>
-    </div>
+        // Generate streak dates for the last 28 days ending yesterday
+        function generateInitialStreakDates(numDays) {
+            const dates = [];
+            const today = new Date();
+            for (let i = numDays; i > 0; i--) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i); // Go back i days from today
+                dates.push(formatDate(date));
+            }
+            return dates;
+        }
+
+        // App state stored in memory
+        let appState = {
+            readingStreak: 0, // Will be updated by loadState/recalculateStreak
+            longestStreak: 0, // Will be updated by loadState/recalculateStreak
+            // Initializing streakDates to 28 days ending yesterday
+            streakDates: generateInitialStreakDates(28), 
+            habits: [
+                { id: 1, name: 'Morning Meditation', completed: false },
+                { id: 2, name: '30-min Workout', completed: false }
+            ],
+            todayReadingMarked: false, 
+            currentCalendarDate: new Date() 
+        };
+
+        const LOCAL_STORAGE_KEY = 'dailyHabitsTrackerState';
+
+        /**
+         * Loads the application state from local storage.
+         * If no state is found, initializes with default values.
+         */
+        function loadState() {
+            try {
+                const storedState = localStorage.getItem(LOCAL_STORAGE_KEY);
+                if (storedState) {
+                    const parsedState = JSON.parse(storedState);
+                    // Ensure dates are parsed correctly
+                    if (parsedState.currentCalendarDate) {
+                        parsedState.currentCalendarDate = new Date(parsedState.currentCalendarDate);
+                    }
+                    // Validate streakDates to be an array
+                    if (!Array.isArray(parsedState.streakDates)) {
+                        parsedState.streakDates = [];
+                    }
+                    Object.assign(appState, parsedState);
+                } else {
+                    // If no stored state, set initial streak values
+                    appState.readingStreak = 28;
+                    appState.longestStreak = 28;
+                }
+            } catch (error) {
+                console.error("Error loading state from local storage:", error);
+                // If parsing fails, reset to default state
+                saveState(); 
+            }
+        }
+
+        /**
+         * Saves the current application state to local storage.
+         */
+        function saveState() {
+            try {
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(appState));
+            } catch (error) {
+                console.error("Error saving state to local storage:", error);
+            }
+        }
+
+        /**
+         * Initializes the application on page load.
+         * Loads state, checks today's reading status, and updates UI.
+         */
+        function initApp() {
+            loadState();
+            checkTodayReadingStatus();
+            updateWeeklyTracker();
+            updateCalendar();
+            updateHabits();
+            updateStats();
+            recalculateStreak(); // Ensure streak is calculated correctly on load
+
+            // Event listeners for calendar navigation
+            document.getElementById('prev-month-btn').addEventListener('click', () => changeMonth(-1));
+            document.getElementById('next-month-btn').addEventListener('click', () => changeMonth(1));
+            document.getElementById('mark-reading-btn').addEventListener('click', markTodayReading);
+            document.getElementById('new-habit-input').addEventListener('keypress', handleEnterKey);
+        }
+
+        /**
+         * Checks if today's reading has already been marked based on streakDates.
+         * Disables the button if it has.
+         */
+        function checkTodayReadingStatus() {
+            const today = new Date();
+            const todayDateString = formatDate(today);
+            appState.todayReadingMarked = appState.streakDates.includes(todayDateString);
+            
+            const btn = document.getElementById('mark-reading-btn');
+            if (appState.todayReadingMarked) {
+                btn.textContent = "Today's Reading Complete! ✅";
+                btn.disabled = true;
+                btn.classList.remove('bg-green-500', 'hover:bg-green-600');
+                btn.classList.add('bg-gray-400', 'cursor-not-allowed');
+            } else {
+                btn.textContent = "Mark Today's Reading ✓";
+                btn.disabled = false;
+                btn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                btn.classList.add('bg-green-500', 'hover:bg-green-600');
+            }
+        }
+
+        /**
+         * Updates the weekly tracker display.
+         */
+        function updateWeeklyTracker() {
+            const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const tracker = document.getElementById('weekly-tracker');
+            tracker.innerHTML = '';
+            
+            const today = new Date();
+            const currentDayIndex = today.getDay(); // 0 for Sunday, 1 for Monday, etc.
+
+            for (let i = 0; i < 7; i++) {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'flex flex-col items-center p-2 rounded-lg';
+                
+                const dayLabel = document.createElement('span');
+                dayLabel.className = `text-gray-700 font-medium ${i === currentDayIndex ? 'text-blue-600 font-bold' : ''}`;
+                dayLabel.textContent = weekDays[i];
+
+                const checkmarkContainer = document.createElement('div');
+                checkmarkContainer.className = `w-8 h-8 rounded-full flex items-center justify-center mt-1 
+                                                ${i === currentDayIndex ? 'bg-blue-200' : 'bg-gray-200'}`;
+                
+                // Determine if the day was marked for reading in the current week
+                const dateToCheck = new Date(today);
+                dateToCheck.setDate(today.getDate() - (currentDayIndex - i)); // Adjust date to match the day of the week iteration
+                const dateStringToCheck = formatDate(dateToCheck);
+
+                if (appState.streakDates.includes(dateStringToCheck)) {
+                    const checkmark = document.createElement('span');
+                    checkmark.className = 'text-green-600 font-bold text-lg';
+                    checkmark.innerHTML = '&#10003;'; // Checkmark symbol
+                    checkmarkContainer.appendChild(checkmark);
+                } else {
+                     const emptyCircle = document.createElement('div');
+                     emptyCircle.className = 'w-4 h-4 border-2 border-gray-400 rounded-full';
+                     checkmarkContainer.appendChild(emptyCircle);
+                }
+
+                dayEl.appendChild(dayLabel);
+                dayEl.appendChild(checkmarkContainer);
+                tracker.appendChild(dayEl);
+            }
+        }
+
+        /**
+         * Renders the calendar for the current month and year in appState.
+         */
+        function updateCalendar() {
+            const calendarDaysContainer = document.getElementById('calendar-days');
+            calendarDaysContainer.innerHTML = '';
+            
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
+            const currentMonth = appState.currentCalendarDate.getMonth();
+            const currentYear = appState.currentCalendarDate.getFullYear();
+
+            document.getElementById('current-month-year').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+
+            // Get the first day of the month
+            const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+            const startingDay = firstDayOfMonth.getDay(); // 0 for Sunday, 1 for Monday, etc.
+
+            // Get the number of days in the month
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+            const today = new Date();
+            const todayDateString = formatDate(today);
+
+            // Add empty divs for the days before the 1st of the month
+            for (let i = 0; i < startingDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day p-2 text-center text-gray-400 rounded-md';
+                calendarDaysContainer.appendChild(emptyDay);
+            }
+
+            // Add days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEl = document.createElement('div');
+                const dateString = formatDate(new Date(currentYear, currentMonth, day));
+                
+                let classes = 'calendar-day p-2 text-center rounded-md font-medium transition-all duration-150 ease-in-out';
+                let content = day;
+
+                if (dateString === todayDateString) {
+                    classes += ' bg-blue-500 text-white shadow-md transform scale-105';
+                } else if (appState.streakDates.includes(dateString)) {
+                    classes += ' bg-green-500 text-white shadow-md';
+                    content = `
+                        <svg class="small-fire-icon w-4 h-4 inline-block mr-1" viewBox="0 0 24 24" fill="white">
+                            <path d="M12 2C12 2 7.5 6 7.5 10.5C7.5 14.5 12 22 12 22C12 22 16.5 14.5 16.5 10.5C16.5 6 12 2 12 2Z" />
+                            <path d="M12 6C12 6 9.5 8.5 9.5 11C9.5 13 12 18 12 18C12 18 14.5 13 14.5 11C14.5 8.5 12 6 12 6Z" fill="#FFA500"/>
+                        </svg>
+                        ${day}
+                    `;
+                } else {
+                    classes += ' bg-gray-100 text-gray-700 hover:bg-gray-200';
+                }
+                dayEl.className = classes;
+                dayEl.innerHTML = content;
+                calendarDaysContainer.appendChild(dayEl);
+            }
+        }
+
+        /**
+         * Changes the displayed month in the calendar.
+         * @param {number} offset - -1 for previous month, 1 for next month.
+         */
+        function changeMonth(offset) {
+            const newDate = new Date(appState.currentCalendarDate);
+            newDate.setMonth(newDate.getMonth() + offset);
+            appState.currentCalendarDate = newDate;
+            updateCalendar();
+        }
+
+        /**
+         * Updates the display of daily habits.
+         */
+        function updateHabits() {
+            const habitsList = document.getElementById('habits-list');
+            habitsList.innerHTML = '';
+            
+            appState.habits.forEach(habit => {
+                const habitEl = document.createElement('div');
+                habitEl.className = 'habit-item flex items-center justify-between p-4 bg-gray-50 rounded-lg shadow-sm transition-all duration-200 ease-in-out hover:bg-gray-100 border border-gray-200';
+                
+                habitEl.innerHTML = `
+                    <div class="habit-left flex items-center">
+                        <input type="checkbox" id="habit-${habit.id}" class="form-checkbox h-5 w-5 text-indigo-600 rounded-md border-gray-300 focus:ring-indigo-500 transition-colors duration-200" ${habit.completed ? 'checked' : ''} onchange="toggleHabit(${habit.id})">
+                        <label for="habit-${habit.id}" class="ml-3 text-lg text-gray-800 cursor-pointer ${habit.completed ? 'line-through text-gray-500' : ''}">${habit.name}</label>
+                    </div>
+                    <button class="remove-btn bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md shadow-sm transition-all duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400" onclick="removeHabit(${habit.id})">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                `;
+                habitsList.appendChild(habitEl);
+            });
+            saveState(); // Save state after habits are updated
+        }
+
+        /**
+         * Updates the display of all statistics (streak, habits completed, longest streak).
+         */
+        function updateStats() {
+            document.getElementById('streak-count').textContent = appState.readingStreak;
+            document.getElementById('current-streak').textContent = appState.readingStreak;
+            document.getElementById('longest-streak').textContent = appState.longestStreak;
+            
+            const completedHabits = appState.habits.filter(habit => habit.completed).length;
+            document.getElementById('habits-completed').textContent = completedHabits;
+            saveState(); // Save state after stats are updated
+        }
+
+        /**
+         * Marks today's reading as complete, updates streak, and disables the button for the day.
+         */
+        function markTodayReading() {
+            const today = new Date();
+            const todayDateString = formatDate(today);
+
+            if (!appState.streakDates.includes(todayDateString)) {
+                appState.streakDates.push(todayDateString);
+                // Sort streakDates to ensure chronological order for future analysis
+                appState.streakDates.sort(); 
+
+                // Recalculate streak based on contiguous dates
+                recalculateStreak();
+                
+                updateCalendar();
+                updateStats();
+                updateWeeklyTracker();
+                checkTodayReadingStatus(); // Update button state
+                saveState(); // Persist changes
+            }
+        }
+
+        /**
+         * Recalculates the reading streak based on contiguous dates in `streakDates`.
+         * This ensures the streak is accurate even if days were missed.
+         */
+        function recalculateStreak() {
+            if (appState.streakDates.length === 0) {
+                appState.readingStreak = 0;
+                appState.longestStreak = Math.max(appState.longestStreak, 0); // Still update longest if needed
+                return;
+            }
+
+            let currentStreak = 0;
+            let longestTempStreak = 0;
+            const sortedDates = [...appState.streakDates].sort(); // Ensure sorted
+
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1);
+
+            const todayFormatted = formatDate(today);
+            const yesterdayFormatted = formatDate(yesterday);
+
+            let lastDateInStreak = null;
+
+            // Calculate current streak
+            if (sortedDates.includes(todayFormatted)) {
+                lastDateInStreak = today;
+            } else if (sortedDates.includes(yesterdayFormatted)) {
+                lastDateInStreak = yesterday;
+            }
+
+            if (lastDateInStreak) {
+                currentStreak = 1;
+                for (let i = sortedDates.length - 1; i >= 0; i--) {
+                    const date = new Date(sortedDates[i]);
+                    // Only consider dates up to and including 'lastDateInStreak' for current streak
+                    if (date > lastDateInStreak) continue; 
+                    
+                    const nextExpectedDate = new Date(lastDateInStreak);
+                    nextExpectedDate.setDate(lastDateInStreak.getDate() - (currentStreak - 1));
+                    
+                    if (formatDate(date) === formatDate(nextExpectedDate)) {
+                        // This date is part of the current contiguous streak
+                        // No need to increment currentStreak here as it's already counted in the loop
+                    } else if (formatDate(date) === formatDate(new Date(nextExpectedDate.setDate(nextExpectedDate.getDate() -1)))) {
+                        // This handles cases where the current date is yesterday and we are checking for the day before yesterday
+                        currentStreak++;
+                    }
+                    else {
+                        break; // Streak broken
+                    }
+                }
+            } else {
+                currentStreak = 0;
+            }
+
+            appState.readingStreak = currentStreak;
+
+            // Calculate longest streak by iterating through all possible streaks
+            let tempContiguous = 0;
+            for (let i = 0; i < sortedDates.length; i++) {
+                tempContiguous++;
+                if (i < sortedDates.length - 1) {
+                    const date1 = new Date(sortedDates[i]);
+                    const date2 = new Date(sortedDates[i+1]);
+                    date1.setDate(date1.getDate() + 1); // Check if the next day is exactly the next date
+                    if (formatDate(date1) !== formatDate(date2)) {
+                        longestTempStreak = Math.max(longestTempStreak, tempContiguous);
+                        tempContiguous = 0;
+                    }
+                }
+            }
+            longestTempStreak = Math.max(longestTempStreak, tempContiguous); // Catch the last streak if it's the longest
+
+            appState.longestStreak = Math.max(appState.longestStreak, longestTempStreak); // Take the max of existing longest and newly calculated
+        }
+
+
+        /**
+         * Toggles the completion status of a habit.
+         * @param {number} habitId - The ID of the habit to toggle.
+         */
+        function toggleHabit(habitId) {
+            const habit = appState.habits.find(h => h.id === habitId);
+            if (habit) {
+                habit.completed = !habit.completed;
+                updateHabits();
+                updateStats();
+            }
+        }
+
+        /**
+         * Removes a habit from the list.
+         * @param {number} habitId - The ID of the habit to remove.
+         */
+        function removeHabit(habitId) {
+            appState.habits = appState.habits.filter(h => h.id !== habitId);
+            updateHabits();
+            updateStats();
+        }
+
+        /**
+         * Adds a new custom habit based on user input.
+         */
+        function addCustomHabit() {
+            const input = document.getElementById('new-habit-input');
+            const habitName = input.value.trim();
+            
+            if (habitName) {
+                const newHabit = {
+                    id: Date.now(), // Unique ID based on timestamp
+                    name: habitName,
+                    completed: false
+                };
+                appState.habits.push(newHabit);
+                input.value = ''; // Clear input field
+                updateHabits();
+                updateStats();
+            }
+        }
+
+        /**
+         * Handles the Enter key press in the new habit input field.
+         * @param {KeyboardEvent} event - The keyboard event object.
+         */
+        function handleEnterKey(event) {
+            if (event.key === 'Enter') {
+                addCustomHabit();
+            }
+        }
+
+        // Initialize the app when the DOM content is fully loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
 </body>
 </html>
