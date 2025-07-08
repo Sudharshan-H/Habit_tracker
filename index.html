@@ -108,7 +108,7 @@
             return `${year}-${month}-${day}`;
         }
 
-        // App state stored in memory
+        // App state stored in memory with persistence simulation
         let appState = {
             readingStreak: 0,
             longestStreak: 0,
@@ -119,8 +119,68 @@
             ],
             todayReadingMarked: false,
             currentCalendarDate: new Date(),
-            lastVisitDate: ''
+            lastVisitDate: '',
+            customHabits: [] // Store custom habits separately for persistence
         };
+
+        // Simulated persistence using URL hash to maintain state during session
+        function saveStateToHash() {
+            const stateToSave = {
+                streakDates: appState.streakDates,
+                longestStreak: appState.longestStreak,
+                customHabits: appState.customHabits,
+                todayCompletedHabits: appState.habits.filter(h => h.completed).map(h => h.id),
+                lastVisitDate: appState.lastVisitDate
+            };
+            
+            try {
+                const encodedState = btoa(JSON.stringify(stateToSave));
+                window.location.hash = encodedState;
+            } catch (e) {
+                console.log('State too large for URL hash, continuing without persistence');
+            }
+        }
+
+        function loadStateFromHash() {
+            try {
+                if (window.location.hash) {
+                    const encodedState = window.location.hash.substring(1);
+                    const savedState = JSON.parse(atob(encodedState));
+                    
+                    // Restore streak data
+                    if (savedState.streakDates) {
+                        appState.streakDates = savedState.streakDates;
+                    }
+                    if (savedState.longestStreak) {
+                        appState.longestStreak = savedState.longestStreak;
+                    }
+                    
+                    // Restore custom habits
+                    if (savedState.customHabits) {
+                        appState.customHabits = savedState.customHabits;
+                        // Add custom habits to main habits array
+                        appState.habits = appState.habits.concat(savedState.customHabits);
+                    }
+                    
+                    // Restore today's habit completions if it's the same day
+                    const today = formatDate(new Date());
+                    if (savedState.lastVisitDate === today && savedState.todayCompletedHabits) {
+                        savedState.todayCompletedHabits.forEach(habitId => {
+                            const habit = appState.habits.find(h => h.id === habitId);
+                            if (habit) {
+                                habit.completed = true;
+                            }
+                        });
+                    }
+                    
+                    appState.lastVisitDate = savedState.lastVisitDate || '';
+                    return true;
+                }
+            } catch (e) {
+                console.log('Error loading state from hash, starting fresh');
+            }
+            return false;
+        }
 
         // Generate complete June 2025 + July 1-6, 2025 reading streak
         function generateInitialStreak() {
@@ -142,16 +202,19 @@
         }
 
         /**
-         * Loads the application state from JavaScript variables (no localStorage).
+         * Loads the application state from URL hash (simulated persistence).
          * Initializes with default values including the June + July streak.
          */
         function loadState() {
-            // Initialize with the complete June + July 1-6 streak
-            if (appState.streakDates.length === 0) {
+            // Try to load from hash first
+            const loadedFromHash = loadStateFromHash();
+            
+            // Initialize with the complete June + July 1-6 streak if not loaded from hash
+            if (!loadedFromHash && appState.streakDates.length === 0) {
                 appState.streakDates = generateInitialStreak();
             }
 
-            // Daily habit reset logic - reset static habits daily
+            // Daily habit reset logic - reset static habits daily, but preserve custom habits
             const today = formatDate(new Date());
             if (appState.lastVisitDate !== today) {
                 appState.habits.forEach(habit => {
@@ -160,6 +223,7 @@
                     }
                 });
                 appState.lastVisitDate = today;
+                saveStateToHash(); // Save the new visit date
             }
         }
 
@@ -372,6 +436,7 @@
                 updateStats();
                 updateWeeklyTracker();
                 checkTodayReadingStatus();
+                saveStateToHash(); // Save state after marking reading
             }
         }
 
@@ -447,6 +512,7 @@
                 habit.completed = !habit.completed;
                 updateHabits();
                 updateStats();
+                saveStateToHash(); // Save state after toggling habit
             }
         }
 
@@ -457,8 +523,10 @@
             const habit = appState.habits.find(h => h.id === habitId);
             if (habit && !habit.isStatic) {
                 appState.habits = appState.habits.filter(h => h.id !== habitId);
+                appState.customHabits = appState.customHabits.filter(h => h.id !== habitId);
                 updateHabits();
                 updateStats();
+                saveStateToHash(); // Save state after removing habit
             }
         }
 
@@ -477,9 +545,11 @@
                     isStatic: false
                 };
                 appState.habits.push(newHabit);
+                appState.customHabits.push(newHabit);
                 input.value = '';
                 updateHabits();
                 updateStats();
+                saveStateToHash(); // Save state after adding habit
             }
         }
 
