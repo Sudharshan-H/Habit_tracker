@@ -112,7 +112,7 @@
         let appState = {
             readingStreak: 0,
             longestStreak: 0,
-            streakDates: [], // Start empty, will be populated with June + July dates
+            streakDates: [], 
             habits: [
                 { id: 1, name: 'Morning Meditation', completed: false, isStatic: true },
                 { id: 2, name: 'Push-ups', completed: false, isStatic: true }
@@ -120,32 +120,31 @@
             todayReadingMarked: false,
             currentCalendarDate: new Date(),
             lastVisitDate: '',
-            customHabits: [] // Store custom habits separately for persistence
+            customHabits: [] 
         };
 
-        // Simulated persistence using URL hash to maintain state during session
-        function saveStateToHash() {
+        // Simulated persistence using localStorage to maintain state
+        function saveStateToLocalStorage() {
             const stateToSave = {
                 streakDates: appState.streakDates,
                 longestStreak: appState.longestStreak,
-                customHabits: appState.customHabits,
+                customHabits: appState.customHabits, 
                 todayCompletedHabits: appState.habits.filter(h => h.completed).map(h => h.id),
                 lastVisitDate: appState.lastVisitDate
             };
             
             try {
-                const encodedState = btoa(JSON.stringify(stateToSave));
-                window.location.hash = encodedState;
+                localStorage.setItem('dailyHabitsTrackerState', JSON.stringify(stateToSave));
             } catch (e) {
-                console.log('State too large for URL hash, continuing without persistence');
+                console.error('Error saving state to localStorage:', e);
             }
         }
 
-        function loadStateFromHash() {
+        function loadStateFromLocalStorage() {
             try {
-                if (window.location.hash) {
-                    const encodedState = window.location.hash.substring(1);
-                    const savedState = JSON.parse(atob(encodedState));
+                const savedStateString = localStorage.getItem('dailyHabitsTrackerState');
+                if (savedStateString) {
+                    const savedState = JSON.parse(savedStateString);
                     
                     // Restore streak data
                     if (savedState.streakDates) {
@@ -158,10 +157,13 @@
                     // Restore custom habits
                     if (savedState.customHabits) {
                         appState.customHabits = savedState.customHabits;
-                        // Add custom habits to main habits array
-                        appState.habits = appState.habits.concat(savedState.customHabits);
+                        // Filter out existing static habits and add them back to avoid duplication
+                        appState.habits = appState.habits.filter(h => h.isStatic).concat(savedState.customHabits);
+                    } else {
+                        // If no custom habits saved, ensure appState.customHabits is an empty array
+                        appState.customHabits = [];
                     }
-                    
+
                     // Restore today's habit completions if it's the same day
                     const today = formatDate(new Date());
                     if (savedState.lastVisitDate === today && savedState.todayCompletedHabits) {
@@ -177,12 +179,12 @@
                     return true;
                 }
             } catch (e) {
-                console.log('Error loading state from hash, starting fresh');
+                console.error('Error loading state from localStorage, starting fresh:', e);
             }
             return false;
         }
 
-        // Generate complete June 2025 + July 1-6, 2025 reading streak
+        // Generate complete June 2025 + July 1-7, 2025 reading streak
         function generateInitialStreak() {
             const streakDates = [];
             
@@ -192,8 +194,8 @@
                 streakDates.push(formatDate(date));
             }
             
-            // Add July 1-6, 2025 (6 days)
-            for (let day = 1; day <= 6; day++) {
+            // Add July 1-7, 2025 (7 days)
+            for (let day = 1; day <= 7; day++) {
                 const date = new Date(2025, 6, day); // Month 6 = July (0-indexed)
                 streakDates.push(formatDate(date));
             }
@@ -202,28 +204,38 @@
         }
 
         /**
-         * Loads the application state from URL hash (simulated persistence).
-         * Initializes with default values including the June + July streak.
+         * Loads the application state from localStorage (simulated persistence).
+         * Ensures the initial June + July streak dates are always present.
          */
         function loadState() {
-            // Try to load from hash first
-            const loadedFromHash = loadStateFromHash();
+            // Always try to load from localStorage first
+            loadStateFromLocalStorage();
             
-            // Initialize with the complete June + July 1-6 streak if not loaded from hash
-            if (!loadedFromHash && appState.streakDates.length === 0) {
-                appState.streakDates = generateInitialStreak();
-            }
+            // Generate the full initial streak dates (June + July 1-7)
+            const initialDesiredStreak = generateInitialStreak();
+            
+            // Convert current appState.streakDates to a Set for efficient merging
+            // This ensures all initialDesiredStreak dates are present,
+            // even if localStorage only had a partial set previously.
+            const currentStreakSet = new Set(appState.streakDates);
+
+            // Add all initialDesiredStreak dates to currentStreakSet
+            initialDesiredStreak.forEach(date => currentStreakSet.add(date));
+
+            // Update appState.streakDates with the merged and sorted dates
+            appState.streakDates = Array.from(currentStreakSet).sort();
 
             // Daily habit reset logic - reset static habits daily, but preserve custom habits
             const today = formatDate(new Date());
             if (appState.lastVisitDate !== today) {
+                // Reset completion for static habits
                 appState.habits.forEach(habit => {
                     if (habit.isStatic) {
-                        habit.completed = false; // Reset static habits daily
+                        habit.completed = false; 
                     }
                 });
                 appState.lastVisitDate = today;
-                saveStateToHash(); // Save the new visit date
+                saveStateToLocalStorage(); // Save the new visit date and reset habits state
             }
         }
 
@@ -436,7 +448,7 @@
                 updateStats();
                 updateWeeklyTracker();
                 checkTodayReadingStatus();
-                saveStateToHash(); // Save state after marking reading
+                saveStateToLocalStorage(); 
             }
         }
 
@@ -512,7 +524,7 @@
                 habit.completed = !habit.completed;
                 updateHabits();
                 updateStats();
-                saveStateToHash(); // Save state after toggling habit
+                saveStateToLocalStorage(); 
             }
         }
 
@@ -526,7 +538,7 @@
                 appState.customHabits = appState.customHabits.filter(h => h.id !== habitId);
                 updateHabits();
                 updateStats();
-                saveStateToHash(); // Save state after removing habit
+                saveStateToLocalStorage(); 
             }
         }
 
@@ -549,7 +561,7 @@
                 input.value = '';
                 updateHabits();
                 updateStats();
-                saveStateToHash(); // Save state after adding habit
+                saveStateToLocalStorage(); 
             }
         }
 
